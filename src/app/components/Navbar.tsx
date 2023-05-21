@@ -13,6 +13,9 @@ export default function Navbar() {
         <li>
           -&gt; <Link href="/features">Website features</Link>
         </li>
+        <li>
+          -&gt; <Link href="/analytics">Analytics</Link>
+        </li>
       </ul>
     </nav>
   )
