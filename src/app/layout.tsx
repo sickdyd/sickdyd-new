@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import press_start_p2 from './fonts'
 import './globals.css'
+import { Suspense } from 'react'
+import Analytics from './components/Analytics'
 
 export const metadata = {
   title: 'Roberto Reale Josef Antonio homepage',
@@ -16,6 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={press_start_p2.className}>
+        <Suspense>
+          <Analytics />
+        </Suspense>
         <main className="flex h-full flex-col items-center justify-between p-24">
           {children}
           <Link className="mt-16" href="/">
