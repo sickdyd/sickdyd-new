@@ -1,3 +1,4 @@
+import { CountryAndUsers } from '@/app/components/CurrentUsers'
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
 import { getAuthenticationToken } from './getAuthenticationToken'
 
@@ -16,7 +17,7 @@ export async function getCurrentUsers(propertyId: string) {
       ],
       dimensions: [
         {
-          name: 'city',
+          name: 'country',
         },
       ],
       metrics: [
@@ -26,20 +27,31 @@ export async function getCurrentUsers(propertyId: string) {
       ],
     })
 
+    console.log(JSON.stringify(response, null, 2))
+
     if (!response || !response.rows) {
       return 1
     }
 
-    const currentUsers = response.rows.reduce((acc, row) => {
-      if (row && row.metricValues) {
-        const metricValue = parseInt(row.metricValues[0].value || '0')
-        return acc + metricValue
+    const countryAndUsers = {} as CountryAndUsers
+
+    const totalUsers = response.rows.reduce((totalUsers, row) => {
+      if (row && row.metricValues && row.dimensionValues) {
+        const country = row.dimensionValues[0].value
+        const users = row.metricValues[0].value
+
+        if (country && users) {
+          countryAndUsers[country] = parseInt(users)
+        }
+
+        const userCount = parseInt(row.metricValues[0].value || '0')
+        return totalUsers + userCount
       }
 
-      return acc > 0 ? acc : 1
+      return totalUsers > 0 ? totalUsers : 1
     }, 0)
 
-    return currentUsers
+    return { totalUsers, countryAndUsers }
   } catch (error) {
     console.error('Error querying Google Analytics Data API:', error)
     throw error
