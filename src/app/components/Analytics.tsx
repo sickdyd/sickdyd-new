@@ -4,6 +4,7 @@ import Script from 'next/script'
 
 export default function Analytics() {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+    // TODO: uncomment before release
     // return null
   }
 

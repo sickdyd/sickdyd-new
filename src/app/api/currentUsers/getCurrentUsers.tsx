@@ -1,8 +1,11 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
+import { getAuthenticationToken } from './getAuthenticationToken'
 
 export async function getCurrentUsers(propertyId: string) {
   try {
-    const analyticsDataClient = new BetaAnalyticsDataClient()
+    const auth = getAuthenticationToken()
+    const analyticsDataClient = new BetaAnalyticsDataClient({ auth })
+
     const [response] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
       dateRanges: [
@@ -24,16 +27,17 @@ export async function getCurrentUsers(propertyId: string) {
     })
 
     if (!response || !response.rows) {
-      return { currentUsers: 0 }
+      return 1
     }
 
-    const currentUsers = response.rows.reduce(
-      (acc, row) =>
-        row && row.metricValues
-          ? acc + parseInt(row.metricValues[0].value || '0')
-          : 0,
-      0
-    )
+    const currentUsers = response.rows.reduce((acc, row) => {
+      if (row && row.metricValues) {
+        const metricValue = parseInt(row.metricValues[0].value || '0')
+        return acc + metricValue
+      }
+
+      return acc > 0 ? acc : 1
+    }, 0)
 
     return currentUsers
   } catch (error) {
