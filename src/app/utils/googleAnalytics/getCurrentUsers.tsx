@@ -27,8 +27,6 @@ export async function getCurrentUsers(propertyId: string) {
       ],
     })
 
-    console.log(JSON.stringify(response, null, 2))
-
     if (!response || !response.rows) {
       return 1
     }
