@@ -2,8 +2,14 @@ import { CountryAndUsers } from '@/app/components/CurrentUsers'
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
 import { getAuthenticationToken } from './getAuthenticationToken'
 
-export async function getCurrentUsers(propertyId: string) {
+export async function getCurrentUsers() {
   try {
+    const propertyId = process.env.GA4_PROPERTY_ID
+
+    if (!propertyId) {
+      throw new Error('GA4_PROPERTY_ID is not set, the request cannot be done')
+    }
+
     const auth = getAuthenticationToken()
     const analyticsDataClient = new BetaAnalyticsDataClient({ auth })
 
